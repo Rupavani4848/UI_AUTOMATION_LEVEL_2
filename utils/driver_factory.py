@@ -1,20 +1,22 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from config.settings import GRID_URL, HEADLESS
+
 
 def get_driver():
 
-    options = webdriver.ChromeOptions()
-    options.add_argument("--start-maximized")
+    chrome_options = Options()
 
-    # Jenkins compatible options
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
+    if HEADLESS:
+        chrome_options.add_argument("--headless=new")
 
-    service = Service(ChromeDriverManager().install())
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--window-size=1920,1080")
 
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Remote(
+        command_executor=GRID_URL,
+        options=chrome_options
+    )
 
     return driver
